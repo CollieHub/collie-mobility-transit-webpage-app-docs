@@ -77,7 +77,7 @@ erDiagram
     }
 
     day_types {
-        TEXT id PK "e.g. lunes_a_viernes"
+        TEXT id PK "UUID e.g. 88f18fc3-ba8e-521a-a093-07db0825cf3a"
         TEXT code UK "e.g. lunes_a_viernes"
         TEXT name "Nombre visual del tipo de día"
         TEXT description "Descripción del tipo de servicio"
@@ -89,7 +89,7 @@ erDiagram
         TEXT id PK "e.g. sch-route-30877-ida-lunes_a_viernes-1"
         TEXT branch_id FK "Relación con branches.id"
         TEXT direction "Sentido: ida / vuelta"
-        TEXT day_types_id FK "Relación con day_types.id"
+        TEXT day_types_id FK "UUID Relación con day_types.id"
         TEXT departure_time "Hora de salida inicial (HH:MM)"
         INTEGER dispatch_order "Orden en la planilla del día"
         TEXT trip_times_json "JSON Array de horarios por punto"
@@ -128,12 +128,12 @@ erDiagram
 - **Clave Foránea**: `branch_id` -> `branches(id)`.
 
 ### 7. `day_types` (Tipos de Día)
-- Definición de tipos de servicio o combos para filtrado de horarios con secuencia visual (`display_order`):
-  1. `Lunes a Viernes`
-  2. `Sábados`
-  3. `Domingos y Feriados`
-  4. `Especial (Horario Extraordinario / Invierno)`
+- Definición de tipos de servicio o combos con identificador único UUID (`id`):
+  - `id`: `88f18fc3-ba8e-521a-a093-07db0825cf3a` | `code`: `lunes_a_viernes` | `name`: `Lunes a Viernes` | `display_order`: `1`
+  - `id`: `26453d08-1d87-57ea-910e-1e14de95a162` | `code`: `sabados` | `name`: `Sábados` | `display_order`: `2`
+  - `id`: `ce073f89-6031-5bb6-8d6a-fc16e1b3ca1e` | `code`: `domingos_feriados` | `name`: `Domingos y Feriados` | `display_order`: `3`
+  - `id`: `4dd8ea7a-abb2-552e-b6da-1bb945d7c515` | `code`: `especial` | `name`: `Especial (Horario Extraordinario / Invierno)` | `display_order`: `4`
 
 ### 8. `schedules` (Horarios y Puntos Intermedios)
 - Planilla con horarios de salida y matriz de tiempos de paso por paradas de control.
-- **Claves Foráneas**: `branch_id` -> `branches(id)`, `day_types_id` -> `day_types(id)`.
+- **Claves Foráneas**: `branch_id` -> `branches(id)`, `day_types_id` -> `day_types(id)` (UUID).

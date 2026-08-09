@@ -68,7 +68,7 @@ erDiagram
     }
 
     day_types {
-        TEXT id PK "e.g. lunes_a_viernes"
+        TEXT id PK "UUID e.g. 88f18fc3-ba8e-521a-a093-07db0825cf3a"
         TEXT code UK "e.g. lunes_a_viernes"
         TEXT name "Nombre visual del tipo de día"
         TEXT description "Descripción del tipo de servicio"
@@ -80,7 +80,7 @@ erDiagram
         TEXT id PK "e.g. sch-route-30877-ida-lunes_a_viernes-1"
         TEXT branch_id FK "Relación con branches.id"
         TEXT direction "Sentido: ida / vuelta"
-        TEXT day_types_id FK "Relación con day_types.id"
+        TEXT day_types_id FK "UUID Relación con day_types.id"
         TEXT departure_time "Hora de salida inicial (HH:MM)"
         INTEGER dispatch_order "Orden en la planilla del día"
         TEXT trip_times_json "JSON Array de horarios por punto"
