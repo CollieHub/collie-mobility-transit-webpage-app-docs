@@ -1,12 +1,3 @@
-# 🗄️ Esquema Relacional de Base de Datos (Cloudflare D1)
-
-Este documento especifica el modelo relacional de datos de **Cloudflare D1** (`collie-mobility-transit-db`) para la aplicación Full-Stack Edge **`collie-mobility-transit-webpage-app`**.
-
----
-
-## 📐 Diagrama Entidad-Relación (Mermaid)
-
-```mermaid
 erDiagram
     companies ||--o{ lines : "opera"
     companies ||--o{ branches : "gestiona"
@@ -85,35 +76,3 @@ erDiagram
         TEXT header_aliases_json "JSON Array de alias cargados en consola"
         TEXT stop_addresses_json "JSON Array de direcciones físicas de paradas"
     }
-```
-
----
-
-## 📊 Descripción de las 7 Tablas Relacionales
-
-### 1. `companies` (Empresas de Colectivos)
-- Contiene los datos institucionales de las empresas de transporte que operan las líneas.
-- **Clave Primaria**: `id` (Ej: `company-sit`, `company-228`).
-
-### 2. `lines` (Líneas de Colectivos)
-- Almacena cada línea comercial o tarifa.
-- **Clave Foránea**: `company_id` -> `companies(id)`.
-
-### 3. `branches` (Ramales / Recorridos)
-- Almacena los ramales y variantes de cada línea.
-- **Claves Foráneas**: `line_id` -> `lines(id)`, `company_id` -> `companies(id)`.
-
-### 4. `stops` (Paradas Físicas)
-- Paradas geolocalizadas por ramal y sentido (`ida` / `vuelta`).
-- **Clave Foránea**: `branch_id` -> `branches(id)`.
-
-### 5. `route_shapes` (Trazados Vectoriales)
-- Coordenadas geográficas para renderizar el recorrido en los mapas interactivos.
-- **Clave Foránea**: `branch_id` -> `branches(id)`.
-
-### 6. `day_types` (Tipos de Día)
-- Definición de tipos de servicio o combos para filtrado de horarios (`lunes_a_viernes`, `sabados`, `domingos_feriados`, `especial`).
-
-### 7. `schedules` (Horarios y Puntos Intermedios)
-- Planilla con horarios de salida y matriz de tiempos de paso por paradas de control.
-- **Claves Foráneas**: `branch_id` -> `branches(id)`, `day_types_id` -> `day_types(id)`.
