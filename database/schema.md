@@ -11,6 +11,7 @@ erDiagram
     companies ||--o{ lines : "opera"
     companies ||--o{ branches : "gestiona"
     lines ||--o{ branches : "contiene"
+    branch_statuses ||--o{ branches : "define_estado"
     branches ||--o{ stops : "posee"
     branches ||--o{ route_shapes : "dibuja"
     branches ||--o{ schedules : "programa"
@@ -35,6 +36,15 @@ erDiagram
         TIMESTAMP created_at "Fecha de alta"
     }
 
+    branch_statuses {
+        TEXT id PK "e.g. status-active"
+        TEXT code UK "e.g. active"
+        TEXT name "Nombre visual del estado (e.g. Activo)"
+        TEXT description "Descripción operativa del estado"
+        TEXT color "Código Hexadecimal de estado"
+        TIMESTAMP created_at "Fecha de creación"
+    }
+
     branches {
         TEXT id PK "e.g. route-30877"
         TEXT line_id FK "Relación con lines.id"
@@ -42,6 +52,7 @@ erDiagram
         TEXT name "Nombre del recorrido o variante"
         TEXT company_id FK "Relación con empresas.id"
         TEXT company "Nombre textual de la empresa"
+        TEXT branch_statuses_id FK "Relación con branch_statuses.id"
         TEXT description "Descripción del ramal"
     }
 
@@ -89,31 +100,35 @@ erDiagram
 
 ---
 
-## 📊 Descripción de las 7 Tablas Relacionales
+## 📊 Descripción de las 8 Tablas Relacionales (Todas en Plural)
 
 ### 1. `companies` (Empresas de Colectivos)
-- Contiene los datos institucionales de las empresas de transporte que operan las líneas.
+- Contiene los datos institucionales de las empresas de transporte (`SIT`, `228 (San Isidro)`).
 - **Clave Primaria**: `id` (Ej: `company-sit`, `company-228`).
 
 ### 2. `lines` (Líneas de Colectivos)
 - Almacena cada línea comercial o tarifa.
 - **Clave Foránea**: `company_id` -> `companies(id)`.
 
-### 3. `branches` (Ramales / Recorridos)
-- Almacena los ramales y variantes de cada línea.
-- **Claves Foráneas**: `line_id` -> `lines(id)`, `company_id` -> `companies(id)`.
+### 3. `branch_statuses` (Estados Operativos de Ramal)
+- Define el estado operativo del servicio (`active`, `interrupted`, `reduced`, `suspended`).
+- **Clave Primaria**: `id` (Ej: `status-active`, `status-interrupted`).
 
-### 4. `stops` (Paradas Físicas)
+### 4. `branches` (Ramales / Recorridos)
+- Almacena los ramales y variantes de cada línea.
+- **Claves Foráneas**: `line_id` -> `lines(id)`, `company_id` -> `companies(id)`, `branch_statuses_id` -> `branch_statuses(id)`.
+
+### 5. `stops` (Paradas Físicas)
 - Paradas geolocalizadas por ramal y sentido (`ida` / `vuelta`).
 - **Clave Foránea**: `branch_id` -> `branches(id)`.
 
-### 5. `route_shapes` (Trazados Vectoriales)
+### 6. `route_shapes` (Trazados Vectoriales)
 - Coordenadas geográficas para renderizar el recorrido en los mapas interactivos.
 - **Clave Foránea**: `branch_id` -> `branches(id)`.
 
-### 6. `day_types` (Tipos de Día)
+### 7. `day_types` (Tipos de Día)
 - Definición de tipos de servicio o combos para filtrado de horarios (`lunes_a_viernes`, `sabados`, `domingos_feriados`, `especial`).
 
-### 7. `schedules` (Horarios y Puntos Intermedios)
+### 8. `schedules` (Horarios y Puntos Intermedios)
 - Planilla con horarios de salida y matriz de tiempos de paso por paradas de control.
 - **Claves Foráneas**: `branch_id` -> `branches(id)`, `day_types_id` -> `day_types(id)`.

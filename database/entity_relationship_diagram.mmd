@@ -2,6 +2,7 @@ erDiagram
     companies ||--o{ lines : "opera"
     companies ||--o{ branches : "gestiona"
     lines ||--o{ branches : "contiene"
+    branch_statuses ||--o{ branches : "define_estado"
     branches ||--o{ stops : "posee"
     branches ||--o{ route_shapes : "dibuja"
     branches ||--o{ schedules : "programa"
@@ -26,6 +27,15 @@ erDiagram
         TIMESTAMP created_at "Fecha de alta"
     }
 
+    branch_statuses {
+        TEXT id PK "e.g. status-active"
+        TEXT code UK "e.g. active"
+        TEXT name "Nombre visual del estado (e.g. Activo)"
+        TEXT description "Descripción operativa del estado"
+        TEXT color "Código Hexadecimal de estado"
+        TIMESTAMP created_at "Fecha de creación"
+    }
+
     branches {
         TEXT id PK "e.g. route-30877"
         TEXT line_id FK "Relación con lines.id"
@@ -33,6 +43,7 @@ erDiagram
         TEXT name "Nombre del recorrido o variante"
         TEXT company_id FK "Relación con empresas.id"
         TEXT company "Nombre textual de la empresa"
+        TEXT branch_statuses_id FK "Relación con branch_statuses.id"
         TEXT description "Descripción del ramal"
     }
 
