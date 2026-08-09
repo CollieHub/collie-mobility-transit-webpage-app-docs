@@ -81,6 +81,7 @@ erDiagram
         TEXT code UK "e.g. lunes_a_viernes"
         TEXT name "Nombre visual del tipo de día"
         TEXT description "Descripción del tipo de servicio"
+        INTEGER display_order "Orden visual en el combo desplegable"
         TEXT aws_schedule_type_prefix "Mapeo con AWS DynamoDB"
     }
 
@@ -127,7 +128,11 @@ erDiagram
 - **Clave Foránea**: `branch_id` -> `branches(id)`.
 
 ### 7. `day_types` (Tipos de Día)
-- Definición de tipos de servicio o combos para filtrado de horarios (`lunes_a_viernes`, `sabados`, `domingos_feriados`, `especial`).
+- Definición de tipos de servicio o combos para filtrado de horarios con secuencia visual (`display_order`):
+  1. `Lunes a Viernes`
+  2. `Sábados`
+  3. `Domingos y Feriados`
+  4. `Especial (Horario Extraordinario / Invierno)`
 
 ### 8. `schedules` (Horarios y Puntos Intermedios)
 - Planilla con horarios de salida y matriz de tiempos de paso por paradas de control.
