@@ -7,6 +7,7 @@ erDiagram
     branches ||--o{ route_shapes : "dibuja"
     branches ||--o{ schedules : "programa"
     day_types ||--o{ schedules : "clasifica"
+    schedules ||--o{ schedule_items : "contiene_despachos"
 
     companies {
         TEXT id PK "e.g. company-sit"
@@ -77,14 +78,22 @@ erDiagram
     }
 
     schedules {
-        TEXT id PK "e.g. sch-route-30877-ida-lunes_a_viernes-1"
+        TEXT id PK "e.g. sch-route-30877-ida-lunes_a_viernes"
         TEXT branch_id FK "Relación con branches.id"
         TEXT direction "Sentido: ida / vuelta"
         TEXT day_types_id FK "UUID Relación con day_types.id"
-        TEXT departure_time "Hora de salida inicial (HH:MM)"
-        INTEGER dispatch_order "Orden en la planilla del día"
-        TEXT trip_times_json "JSON Array de horarios por punto"
+        TEXT name "Nombre descriptivo de la grilla"
         TEXT headers_json "JSON Array de cabeceras resueltas"
         TEXT header_aliases_json "JSON Array de alias cargados en consola"
         TEXT stop_addresses_json "JSON Array de direcciones físicas de paradas"
+        TIMESTAMP created_at "Fecha de creación"
+    }
+
+    schedule_items {
+        TEXT id PK "e.g. item-sch-route-30877-ida-lunes_a_viernes-1"
+        TEXT schedule_id FK "Relación con schedules.id"
+        TEXT departure_time "Hora de salida inicial (HH:MM)"
+        INTEGER dispatch_order "Orden en la planilla del día"
+        TEXT trip_times_json "JSON Array de horarios por punto"
+        TIMESTAMP created_at "Fecha de creación"
     }

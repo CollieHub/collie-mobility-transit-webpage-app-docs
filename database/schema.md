@@ -16,6 +16,7 @@ erDiagram
     branches ||--o{ route_shapes : "dibuja"
     branches ||--o{ schedules : "programa"
     day_types ||--o{ schedules : "clasifica"
+    schedules ||--o{ schedule_items : "contiene_despachos"
 
     companies {
         TEXT id PK "e.g. company-sit"
@@ -86,22 +87,30 @@ erDiagram
     }
 
     schedules {
-        TEXT id PK "e.g. sch-route-30877-ida-lunes_a_viernes-1"
+        TEXT id PK "e.g. sch-route-30877-ida-lunes_a_viernes"
         TEXT branch_id FK "Relación con branches.id"
         TEXT direction "Sentido: ida / vuelta"
         TEXT day_types_id FK "UUID Relación con day_types.id"
-        TEXT departure_time "Hora de salida inicial (HH:MM)"
-        INTEGER dispatch_order "Orden en la planilla del día"
-        TEXT trip_times_json "JSON Array de horarios por punto"
+        TEXT name "Nombre descriptivo de la grilla"
         TEXT headers_json "JSON Array de cabeceras resueltas"
         TEXT header_aliases_json "JSON Array de alias cargados en consola"
         TEXT stop_addresses_json "JSON Array de direcciones físicas de paradas"
+        TIMESTAMP created_at "Fecha de creación"
+    }
+
+    schedule_items {
+        TEXT id PK "e.g. item-sch-route-30877-ida-lunes_a_viernes-1"
+        TEXT schedule_id FK "Relación con schedules.id"
+        TEXT departure_time "Hora de salida inicial (HH:MM)"
+        INTEGER dispatch_order "Orden en la planilla del día"
+        TEXT trip_times_json "JSON Array de horarios por punto"
+        TIMESTAMP created_at "Fecha de creación"
     }
 ```
 
 ---
 
-## 📊 Descripción de las 8 Tablas Relacionales (Todas en Plural)
+## 📊 Descripción de las 9 Tablas Relacionales (Todas en Plural)
 
 ### 1. `companies` (Empresas de Colectivos)
 - Contiene los datos institucionales de las empresas de transporte (`SIT`, `228 (San Isidro)`).
@@ -128,12 +137,13 @@ erDiagram
 - **Clave Foránea**: `branch_id` -> `branches(id)`.
 
 ### 7. `day_types` (Tipos de Día)
-- Definición de tipos de servicio o combos con identificador único UUID (`id`):
-  - `id`: `88f18fc3-ba8e-521a-a093-07db0825cf3a` | `code`: `lunes_a_viernes` | `name`: `Lunes a Viernes` | `display_order`: `1`
-  - `id`: `26453d08-1d87-57ea-910e-1e14de95a162` | `code`: `sabados` | `name`: `Sábados` | `display_order`: `2`
-  - `id`: `ce073f89-6031-5bb6-8d6a-fc16e1b3ca1e` | `code`: `domingos_feriados` | `name`: `Domingos y Feriados` | `display_order`: `3`
-  - `id`: `4dd8ea7a-abb2-552e-b6da-1bb945d7c515` | `code`: `especial` | `name`: `Especial (Horario Extraordinario / Invierno)` | `display_order`: `4`
+- Definición de tipos de servicio o combos con identificador único UUID (`id`).
+- **Clave Primaria**: `id` (UUID v4).
 
-### 8. `schedules` (Horarios y Puntos Intermedios)
-- Planilla con horarios de salida y matriz de tiempos de paso por paradas de control.
+### 8. `schedules` (Grilla de Horarios Maestro)
+- Cabecera de la grilla de horarios por ramal, sentido y tipo de día. Almacena las paradas de control y alias.
 - **Claves Foráneas**: `branch_id` -> `branches(id)`, `day_types_id` -> `day_types(id)` (UUID).
+
+### 9. `schedule_items` (Despachos e Horarios Individuales)
+- Filas de servicios/despachos individuales que componen la grilla de horarios.
+- **Clave Foránea**: `schedule_id` -> `schedules(id)`.
