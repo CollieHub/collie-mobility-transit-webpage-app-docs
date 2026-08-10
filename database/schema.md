@@ -84,6 +84,7 @@ erDiagram
         TEXT description "Descripción del tipo de servicio"
         INTEGER display_order "Orden visual en el combo desplegable"
         TEXT aws_schedule_type_prefix "Mapeo con AWS DynamoDB"
+        INTEGER is_enabled "1 = Habilitado / 0 = Deshabilitado"
     }
 
     schedules {
@@ -142,6 +143,7 @@ erDiagram
 
 ### 7. `day_types` (Tipos de Día)
 - Definición de tipos de servicio o combos con identificador único UUID (`id`).
+- **Campos Destacados**: `is_enabled` (INTEGER: `1` = Habilitado / `0` = Deshabilitado). Permite ocultar dinámicamente horarios estacionales o extraordinarios (e.g. Horario de Invierno `especial`).
 - **Clave Primaria**: `id` (UUID v4).
 
 ### 8. `schedules` (Grilla de Horarios Maestro)
