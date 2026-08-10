@@ -1,6 +1,6 @@
 # 🗄️ Esquema Relacional de Base de Datos (Cloudflare D1)
 
-Este documento especifica el modelo relacional de datos de **Cloudflare D1** (`collie-mobility-transit-db`) para la aplicación Full-Stack Edge **`collie-mobility-transit-webpage-app`**.
+Este documento especifica el modelo relacional de datos de **Cloudflare D1** (`collie-mobility-transit-db`) para la aplicación Full-Stack Edge **`collie-mobility-transit-webpage-app`**. Todas las claves primarias (`id`) y claves foráneas en las 9 tablas utilizan exclusivamente el formato **UUID v4 / UUID v5**.
 
 ---
 
@@ -19,7 +19,7 @@ erDiagram
     schedules ||--o{ schedule_items : "contiene_despachos"
 
     companies {
-        TEXT id PK "e.g. company-sit"
+        TEXT id PK "UUID e.g. 23ccf89e-8e47-5a03-836c-4a3998975f6a"
         TEXT code UK "e.g. SIT"
         TEXT name "Nombre de la empresa prestadora"
         TEXT description "Descripción de la cobertura"
@@ -27,18 +27,18 @@ erDiagram
     }
 
     lines {
-        TEXT id PK "e.g. line-RZ01"
+        TEXT id PK "UUID e.g. 05df921c-b6ad-59fb-8e08-ca0adab197ca"
         TEXT code UK "e.g. RZ01"
         TEXT name "Nombre descriptivo de la línea"
         TEXT color "Código Hexadecimal de color"
         TEXT jurisdiction "Municipal / Provincial"
-        TEXT company_id FK "Relación con empresas.id"
+        TEXT company_id FK "UUID Relación con empresas.id"
         TEXT company "Nombre textual de la empresa"
         TIMESTAMP created_at "Fecha de alta"
     }
 
     branch_statuses {
-        TEXT id PK "e.g. status-active"
+        TEXT id PK "UUID e.g. f82c4109-ba8e-521a-a093-07db0825cf3a"
         TEXT code UK "e.g. active"
         TEXT name "Nombre visual del estado (e.g. Activo)"
         TEXT description "Descripción operativa del estado"
@@ -47,19 +47,19 @@ erDiagram
     }
 
     branches {
-        TEXT id PK "e.g. route-30877"
-        TEXT line_id FK "Relación con lines.id"
+        TEXT id PK "UUID e.g. 644f8b84-ab93-5d46-a74e-bfd979acd1ea"
+        TEXT line_id FK "UUID Relación con lines.id"
         TEXT code "Código de ramal (e.g. RZ01)"
         TEXT name "Nombre del recorrido o variante"
-        TEXT company_id FK "Relación con empresas.id"
+        TEXT company_id FK "UUID Relación con empresas.id"
         TEXT company "Nombre textual de la empresa"
-        TEXT branch_statuses_id FK "Relación con branch_statuses.id"
+        TEXT branch_statuses_id FK "UUID Relación con branch_statuses.id"
         TEXT description "Descripción del ramal"
     }
 
     stops {
-        TEXT id PK "e.g. stop-route-30877-ida-1"
-        TEXT branch_id FK "Relación con branches.id"
+        TEXT id PK "UUID e.g. 4a9f3b84-ab93-5d46-a74e-bfd979acd1ea"
+        TEXT branch_id FK "UUID Relación con branches.id"
         TEXT direction "Sentido: ida / vuelta"
         INTEGER stop_order "Secuencia ordinal de parada"
         TEXT name "Dirección física de la parada"
@@ -70,8 +70,8 @@ erDiagram
     }
 
     route_shapes {
-        TEXT id PK "e.g. shape-route-30877-ida"
-        TEXT branch_id FK "Relación con branches.id"
+        TEXT id PK "UUID e.g. 7b9f3b84-ab93-5d46-a74e-bfd979acd1ea"
+        TEXT branch_id FK "UUID Relación con branches.id"
         TEXT direction "Sentido: ida / vuelta"
         TEXT coordinates_json "JSON Array [[lat, lng], ...]"
         REAL total_distance_km "Distancia total del trazado en km"
@@ -87,8 +87,8 @@ erDiagram
     }
 
     schedules {
-        TEXT id PK "e.g. sch-route-30877-ida-lunes_a_viernes"
-        TEXT branch_id FK "Relación con branches.id"
+        TEXT id PK "UUID e.g. 5bca91e8-2c91-5c3c-9111-00669ac8d4db"
+        TEXT branch_id FK "UUID Relación con branches.id"
         TEXT direction "Sentido: ida / vuelta"
         TEXT day_types_id FK "UUID Relación con day_types.id"
         TEXT name "Nombre descriptivo de la grilla"
@@ -99,8 +99,8 @@ erDiagram
     }
 
     schedule_items {
-        TEXT id PK "e.g. item-sch-route-30877-ida-lunes_a_viernes-1"
-        TEXT schedule_id FK "Relación con schedules.id"
+        TEXT id PK "UUID e.g. 0027844c-9a8b-57cf-aa21-74cbd6e85ee8"
+        TEXT schedule_id FK "UUID Relación con schedules.id"
         TEXT departure_time "Hora de salida inicial (HH:MM)"
         INTEGER dispatch_order "Orden en la planilla del día"
         TEXT trip_times_json "JSON Array de horarios por punto"
@@ -110,31 +110,35 @@ erDiagram
 
 ---
 
-## 📊 Descripción de las 9 Tablas Relacionales (Todas en Plural)
+## 📊 Descripción de las 9 Tablas Relacionales (Todas con Identificador UUID)
 
 ### 1. `companies` (Empresas de Colectivos)
 - Contiene los datos institucionales de las empresas de transporte (`SIT`, `228 (San Isidro)`).
-- **Clave Primaria**: `id` (Ej: `company-sit`, `company-228`).
+- **Clave Primaria**: `id` (UUID v4).
 
 ### 2. `lines` (Líneas de Colectivos)
 - Almacena cada línea comercial o tarifa.
-- **Clave Foránea**: `company_id` -> `companies(id)`.
+- **Clave Primaria**: `id` (UUID v4).
+- **Clave Foránea**: `company_id` (UUID) -> `companies(id)`.
 
 ### 3. `branch_statuses` (Estados Operativos de Ramal)
 - Define el estado operativo del servicio (`active`, `interrupted`, `reduced`, `suspended`).
-- **Clave Primaria**: `id` (Ej: `status-active`, `status-interrupted`).
+- **Clave Primaria**: `id` (UUID v4).
 
 ### 4. `branches` (Ramales / Recorridos)
 - Almacena los ramales y variantes de cada línea.
-- **Claves Foráneas**: `line_id` -> `lines(id)`, `company_id` -> `companies(id)`, `branch_statuses_id` -> `branch_statuses(id)`.
+- **Clave Primaria**: `id` (UUID v4).
+- **Claves Foráneas**: `line_id` (UUID) -> `lines(id)`, `company_id` (UUID) -> `companies(id)`, `branch_statuses_id` (UUID) -> `branch_statuses(id)`.
 
 ### 5. `stops` (Paradas Físicas)
 - Paradas geolocalizadas por ramal y sentido (`ida` / `vuelta`).
-- **Clave Foránea**: `branch_id` -> `branches(id)`.
+- **Clave Primaria**: `id` (UUID v4).
+- **Clave Foránea**: `branch_id` (UUID) -> `branches(id)`.
 
 ### 6. `route_shapes` (Trazados Vectoriales)
 - Coordenadas geográficas para renderizar el recorrido en los mapas interactivos.
-- **Clave Foránea**: `branch_id` -> `branches(id)`.
+- **Clave Primaria**: `id` (UUID v4).
+- **Clave Foránea**: `branch_id` (UUID) -> `branches(id)`.
 
 ### 7. `day_types` (Tipos de Día)
 - Definición de tipos de servicio o combos con identificador único UUID (`id`).
@@ -142,8 +146,10 @@ erDiagram
 
 ### 8. `schedules` (Grilla de Horarios Maestro)
 - Cabecera de la grilla de horarios por ramal, sentido y tipo de día. Almacena las paradas de control y alias.
-- **Claves Foráneas**: `branch_id` -> `branches(id)`, `day_types_id` -> `day_types(id)` (UUID).
+- **Clave Primaria**: `id` (UUID v4).
+- **Claves Foráneas**: `branch_id` (UUID) -> `branches(id)`, `day_types_id` (UUID) -> `day_types(id)`.
 
 ### 9. `schedule_items` (Despachos e Horarios Individuales)
 - Filas de servicios/despachos individuales que componen la grilla de horarios.
-- **Clave Foránea**: `schedule_id` -> `schedules(id)`.
+- **Clave Primaria**: `id` (UUID v4).
+- **Clave Foránea**: `schedule_id` (UUID) -> `schedules(id)`.
