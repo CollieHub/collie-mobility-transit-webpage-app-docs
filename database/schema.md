@@ -131,10 +131,21 @@ erDiagram
 - **Clave Primaria**: `id` (UUID v4).
 - **Claves Foráneas**: `line_id` (UUID) -> `lines(id)`, `company_id` (UUID) -> `companies(id)`, `branch_statuses_id` (UUID) -> `branch_statuses(id)`.
 
-### 5. `stops` (Paradas Físicas)
+### 5. `stop_groups` (Grupos de Paradas Unificadas / Estaciones)
+- Agrupa múltiples paradas físicas de distintos ramales que comparten un nodo de espera (ej. "Terminal NK", "Plaza Italia").
+- **Clave Primaria**: `id` (UUID v4).
+- **Campos**: `code` (UK), `name`, `lat`, `lng`, `description`, `is_enabled`.
+
+### 5b. `stop_group_details` (Detalles y Coordenadas Específicas del Grupo)
+- Almacena sub-ubicaciones, coordenadas exactas de refugios, dársenas o plataformas dentro del grupo de paradas.
+- **Clave Primaria**: `id` (UUID v4).
+- **Clave Foránea**: `stop_group_id` (UUID) -> `stop_groups(id)`.
+- **Campos**: `name`, `lat`, `lng`, `address`, `platform_code`, `description`, `display_order`.
+
+### 6. `stops` (Paradas Físicas por Ramal)
 - Paradas geolocalizadas por ramal y sentido (`ida` / `vuelta`).
 - **Clave Primaria**: `id` (UUID v4).
-- **Clave Foránea**: `branch_id` (UUID) -> `branches(id)`.
+- **Claves Foráneas**: `branch_id` (UUID) -> `branches(id)`, `stop_group_id` (UUID) -> `stop_groups(id)`.
 
 ### 6. `route_shapes` (Trazados Vectoriales)
 - Coordenadas geográficas para renderizar el recorrido en los mapas interactivos.

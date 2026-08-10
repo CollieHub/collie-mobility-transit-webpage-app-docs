@@ -48,6 +48,28 @@ erDiagram
         TEXT description "Descripción del ramal"
     }
 
+    stop_groups {
+        TEXT id PK "UUID e.g. a78f3b84-ab93-5d46-a74e-bfd979acd1ea"
+        TEXT code UK "e.g. SG_TERMINAL_NK"
+        TEXT name "Nombre del punto de espera unificado"
+        REAL lat "Latitud central WGS84"
+        REAL lng "Longitud central WGS84"
+        TEXT description "Descripción u observaciones"
+        INTEGER is_enabled "1 = Habilitado / 0 = Deshabilitado"
+    }
+
+    stop_group_details {
+        TEXT id PK "UUID e.g. b89f3b84-ab93-5d46-a74e-bfd979acd1ea"
+        TEXT stop_group_id FK "UUID Relación con stop_groups.id"
+        TEXT name "Nombre de la dársena / andén"
+        REAL lat "Latitud exacta del refugio WGS84"
+        REAL lng "Longitud exacta del refugio WGS84"
+        TEXT address "Dirección o intersección"
+        TEXT platform_code "Código de andén / plataforma"
+        TEXT description "Observaciones de la dársena"
+        INTEGER display_order "Orden visual de la dársena"
+    }
+
     stops {
         TEXT id PK "UUID e.g. 4a9f3b84-ab93-5d46-a74e-bfd979acd1ea"
         TEXT branch_id FK "UUID Relación con branches.id"
@@ -58,6 +80,7 @@ erDiagram
         REAL lng "Longitud WGS84"
         REAL proj_lat "Latitud proyectada en calle"
         REAL proj_lng "Longitud proyectada en calle"
+        TEXT stop_group_id FK "UUID Relación opcional con stop_groups.id"
     }
 
     route_shapes {
