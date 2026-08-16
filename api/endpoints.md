@@ -68,4 +68,31 @@ Servicio unificado de rutas REST servido por **Hono.js** sobre la red global Edg
   - `POST /v1/admin/table/schedules`
   - `GET /v1/admin/table/stops?limit=10000`
   - `POST /v1/admin/table/stops`
-- **Descripción**: Operaciones CRUD autenticadas con límites ampliados a 10.000 filas para edición masiva de paradas y grillas de horarios.
+  - `GET /v1/admin/table/ads`
+  - `POST /v1/admin/table/ads`
+- **Descripción**: Operaciones CRUD autenticadas con límites ampliados para edición masiva de paradas, horarios y anuncios publicitarios.
+
+---
+
+## 6. Anuncios Comerciales y Campañas de Afiliados (Mercado Libre)
+- **Endpoint**: `GET /v1/transit/ads`
+- **Descripción**: Devuelve la lista de campañas y banners activos desde Cloudflare D1 / KV con enlaces de redirección a Mercado Libre y comercios locales.
+- **Formato de Respuesta**:
+```json
+{
+  "success": true,
+  "ads": [
+    {
+      "id": "meli-ofertas-01",
+      "title": "Mercado Libre",
+      "subtitle": "⚡ Ofertas del Día hasta 40% OFF y Envíos Rápidos",
+      "redirectUrl": "https://www.mercadolibre.com.ar/ofertas",
+      "color": "#FFE600",
+      "border": "#E6CF00",
+      "text": "#2D3277",
+      "order": 1
+    }
+  ]
+}
+```
+

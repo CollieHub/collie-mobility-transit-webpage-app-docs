@@ -167,3 +167,9 @@ erDiagram
 - Filas de servicios/despachos individuales que componen la grilla de horarios.
 - **Clave Primaria**: `id` (UUID v4).
 - **Clave Foránea**: `schedule_id` (UUID) -> `schedules(id)`.
+
+### 10. `ads` (Anuncios Comerciales y Campañas de Afiliados)
+- Almacena banners publicitarios, promociones de Mercado Libre y comercios locales.
+- **Clave Primaria**: `id` (UUID / TEXT).
+- **Campos**: `title`, `subtitle`, `image_url`, `redirect_url`, `color`, `border`, `text_color`, `display_order`, `is_active`, `created_at`.
+
