@@ -67,6 +67,7 @@ erDiagram
         REAL lng "Longitud WGS84"
         REAL proj_lat "Latitud proyectada en calle"
         REAL proj_lng "Longitud proyectada en calle"
+        INTEGER is_control_point "1 = Punto de Control / 0 = Parada Regular"
     }
 
     route_shapes {

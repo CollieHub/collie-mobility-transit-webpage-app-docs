@@ -10,57 +10,30 @@ Un **Punto de Control** (o *Waypoint de Horario*) es una parada física clave de
 
 ---
 
-## 🖥️ 1. Configuración en la Consola de Administración (`/login?tab=schedules`)
+## 🗄️ 1. Persistencia y Desnormalización en Base de Datos D1
 
-En el panel de administración (**Consola Horarios**), los operadores configuran las columnas de horarios para cada ramal y tipo de día (Lunes a Viernes, Sábado, Domingo, Feriados, Invierno):
+Los Puntos de Control se almacenan de dos formas sincronizadas para garantizar integridad y máxima velocidad de lectura:
 
-1. **Encabezados de Control (`headers`)**:
-   - Nombres de referencia del punto de control (ej. `ESCALADA`, `HOSPITAL`, `PLAZA ITALIA`, `TERMINAL FONAVI`).
-2. **Mapeo de Paradas Físicas (`stopAddresses` / `stopMappings`)**:
-   - Debajo de cada encabezado, un desplegable interactivo permite seleccionar la parada física exacta del ramal (ej. `1. RVVP+45 Escalada`, `31. Dr. Félix Pagola 380`).
-3. **Persistencia en Base de Datos Cloudflare D1**:
-   - Al guardar la grilla, los datos se almacenan en la tabla `schedules` en campos JSON estructurados:
-     - `headers_json`: Lista de títulos de columnas.
-     - `stop_addresses_json`: Arreglo ordenado con los nombres completos de las paradas asociadas.
-     - `stop_mappings_json`: Diccionario clave-valor que relaciona el índice de la columna con la parada asignada.
-     - `matrix_json`: Matriz de horas programadas para cada servicio/despacho.
+1. **Definición Maestra en `schedules`**:
+   - `headers_json`: Títulos de cabecera de las columnas.
+   - `stop_addresses_json`: Lista ordenada de paradas asignadas.
+   - `stop_mappings_json`: Mapa de índices a paradas físicas.
+
+2. **Atributo Directo en `stops.is_control_point` ($O(1)$)**:
+   - La tabla `stops` cuenta con la columna `is_control_point INTEGER DEFAULT 0`.
+   - **`1`**: La parada actúa como Punto de Control en ese ramal y sentido.
+   - **`0`**: La parada es una parada regular intermedia.
+   - **Sincronización Automática en CRUD**: Al guardar cualquier grilla de horarios en `/v1/admin/schedules/batch`, el backend actualiza de forma atómica la columna `is_control_point` en la tabla `stops` para ese ramal y sentido.
 
 ---
 
-## 🧠 2. Algoritmo de Identificación en el Mapa (`matchesDeclaredControlStop`)
+## 🧠 2. Identificación en el Mapa y Aplicaciones Móviles
 
-Para evitar falsos positivos por coincidencias parciales de texto (por ejemplo, evitar que la palabra `"Hospital"` marque paradas secundarias de la misma calle), se utiliza la función estricta `matchesDeclaredControlStop` en `TransitMap.tsx`:
-
+El visor cartográfico (`TransitMap.tsx`) y las aplicaciones de Kotlin / Swift evalúan directamente:
 ```typescript
-function matchesDeclaredControlStop(declaredStr: string, stopId: string, stopName: string): boolean {
-  if (!declaredStr) return false;
-  
-  // 1. Coincidencia exacta de ID
-  if (stopId && declaredStr === stopId) return true;
-
-  const normDeclared = normalizeStopName(declaredStr);
-  const cleanDeclared = normalizeStopName(declaredStr.replace(/^\d+[\.\s\-]+\s*/, ''));
-
-  const normStop = normalizeStopName(stopName);
-  const cleanStop = normalizeStopName((stopName || '').replace(/^\d+[\.\s\-]+\s*/, ''));
-
-  if (!normDeclared || !normStop) return false;
-
-  // 2. Coincidencia exacta de texto normalizado o limpio sin prefijo numérico
-  if (normDeclared === normStop || cleanDeclared === cleanStop || normDeclared === cleanStop || cleanDeclared === normStop) {
-    return true;
-  }
-
-  // 3. Coincidencia por prefijo/subcadena para encabezados concisos (ej. "Estación", "Barrio España")
-  if (normDeclared.length >= 4 && normStop.length >= 4) {
-    if (normStop.startsWith(normDeclared) || normDeclared.startsWith(normStop) || cleanStop.startsWith(cleanDeclared) || cleanDeclared.startsWith(cleanStop)) {
-      return true;
-    }
-  }
-
-  return false;
-}
+const isControlPoint = stop.is_control_point === 1;
 ```
+Esto garantiza **cero latencia de parseo ($O(1)$)**, determinismo total y la completa eliminación de falsos positivos por nombres similares.
 
 ---
 
