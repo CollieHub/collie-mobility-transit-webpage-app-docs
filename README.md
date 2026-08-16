@@ -15,10 +15,15 @@ Este proyecto implementa un **Escudo de Aislamiento Financiero y de Rendimiento 
 
 ## 📂 Contenido de la Documentación
 
-1. 🏗️ [Visión General de Arquitectura](file:///Users/jonatandanielmoreira/developer/proyectos/collie-mobility-towing/collie-mobility-transit-webpage-app-docs/architecture/overview.md)
-2. 🗄️ [Esquema de Base de Datos Cloudflare D1 (SQL)](file:///Users/jonatandanielmoreira/developer/proyectos/collie-mobility-towing/collie-mobility-transit-webpage-app-docs/database/schema.md)
-3. 📡 [Especificación de Endpoints REST API (Hono.js)](file:///Users/jonatandanielmoreira/developer/proyectos/collie-mobility-towing/collie-mobility-transit-webpage-app-docs/api/endpoints.md)
-4. 🔄 [Pipeline de Sincronización (AWS Backoffice ➔ Cloudflare D1)](file:///Users/jonatandanielmoreira/developer/proyectos/collie-mobility-towing/collie-mobility-transit-webpage-app-docs/sync/aws_to_cloudflare.md)
+### 🏗️ Arquitectura y Datos
+1. 🏗️ [Visión General de Arquitectura](architecture/overview.md)
+2. 🗄️ [Esquema de Base de Datos Cloudflare D1 (SQL)](database/schema.md)
+3. 📡 [Especificación de Endpoints REST API (Hono.js)](api/endpoints.md)
+4. 🔄 [Pipeline de Sincronización (AWS Backoffice ➔ Cloudflare D1)](sync/aws_to_cloudflare.md)
+
+### 🚀 Funcionalidades Clave y Algoritmos Cartográficos
+5. 📍 [Puntos de Control, Grillas de Horarios y Horarios de Unidades Activas](features/control_points_and_timetables.md)
+6. 📡 [Editor Cartográfico Radar & Trazados (Reordenamiento y Offset 6m)](features/radar_and_cartography.md)
 
 ---
 
